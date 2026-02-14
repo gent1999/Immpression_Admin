@@ -55,6 +55,10 @@ function ListView({ data, type, onDelete }) {
           arrow: getArrow("email"),
         },
         {
+          label: "Stripe",
+          sortable: false,
+        },
+        {
           label: "Joined",
           sortable: true,
           onClick: () => handleSort("createdAt"),
@@ -126,6 +130,11 @@ function ListView({ data, type, onDelete }) {
           </td>
           <td>{item.name}</td>
           <td>{item.email}</td>
+          <td className="status-cell">
+            <span className={`status ${item.stripeLinked ? "approved" : "rejected"}`}>
+              {item.stripeLinked ? "LINKED" : "NOT LINKED"}
+            </span>
+          </td>
           <td>{new Date(item.createdAt).toLocaleDateString()}</td>
         </>
       );
