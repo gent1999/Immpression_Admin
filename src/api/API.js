@@ -280,6 +280,20 @@ export async function payoutOrder(orderId, token, { amountCents } = {}) {
   }
 }
 
+// ========= Analytics (Admin) =========
+
+export async function getAnalytics(token) {
+  try {
+    const response = await axios.get(`${API_URL}/api/admin/analytics`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching analytics:", error.response?.data || error.message);
+    return { success: false, data: null };
+  }
+}
+
 // ========= Reports Management (Admin - Apple Guideline 1.2 Compliance) =========
 
 // Get all reports with pagination and filters

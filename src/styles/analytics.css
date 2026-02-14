@@ -1,0 +1,364 @@
+/* ═══════════════════════════════════════════
+   Analytics — Premium Minimal Dashboard
+   ═══════════════════════════════════════════ */
+
+/* ─── Page Shell ─── */
+.an-page {
+    padding: 40px 48px 60px;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.an-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    gap: 16px;
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+/* ─── Page Header ─── */
+.an-header {
+    margin-bottom: 48px;
+}
+
+.an-h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.an-subtitle {
+    margin: 6px 0 0;
+    font-size: 15px;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+/* ─── Hero Metrics ─── */
+.an-hero {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 40px 0;
+    margin-bottom: 48px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.an-hero-metric {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    padding: 0 24px;
+}
+
+.an-hero-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a202c;
+    letter-spacing: -1px;
+    line-height: 1;
+}
+
+.an-hero-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 4px;
+}
+
+.an-hero-accent {
+    display: block;
+    width: 32px;
+    height: 3px;
+    border-radius: 2px;
+    margin-top: 10px;
+}
+
+.an-hero-accent.accent-blue   { background: #4299e1; }
+.an-hero-accent.accent-purple { background: #9f7aea; }
+.an-hero-accent.accent-orange { background: #ed8936; }
+.an-hero-accent.accent-green  { background: #48bb78; }
+
+.an-hero-divider {
+    width: 1px;
+    height: 56px;
+    background: #e2e8f0;
+    flex-shrink: 0;
+}
+
+/* ─── Breakdown Panels ─── */
+.an-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+.an-panel {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.an-panel-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 0 0 24px;
+}
+
+.an-row {
+    display: flex;
+    gap: 0;
+}
+
+.an-metric {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    position: relative;
+}
+
+/* subtle divider between metrics */
+.an-metric + .an-metric::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 32px;
+    background: #edf2f7;
+}
+
+.an-metric-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a202c;
+    letter-spacing: -0.5px;
+    line-height: 1;
+}
+
+.an-metric-label {
+    font-size: 11px;
+    color: #a0aec0;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+/* ─── Recent Activity ─── */
+.an-activity {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.an-activity-panel {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* ─── Tables ─── */
+.an-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+}
+
+.an-table thead th {
+    text-align: left;
+    padding: 0 12px 14px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #a0aec0;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.an-table tbody tr {
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.an-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.an-table tbody td {
+    padding: 12px 12px;
+    font-size: 13px;
+    color: #4a5568;
+    border-bottom: 1px solid #f7fafc;
+    vertical-align: middle;
+}
+
+.an-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.an-cell-primary {
+    color: #1a202c;
+    font-weight: 500;
+}
+
+.an-cell-secondary {
+    color: #a0aec0;
+}
+
+/* ─── Tags ─── */
+.an-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.tag-purple { background: #ede9fe; color: #6d28d9; }
+.tag-blue   { background: #dbeafe; color: #1e40af; }
+.tag-paid   { background: #dcfce7; color: #166534; }
+.tag-pending,
+.tag-processing { background: #fef9c3; color: #854d0e; }
+.tag-failed  { background: #fee2e2; color: #991b1b; }
+.tag-refunded { background: #f1f5f9; color: #475569; }
+
+/* ─── Empty State ─── */
+.an-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    text-align: center;
+}
+
+.an-empty-icon {
+    font-size: 32px;
+    opacity: 0.4;
+    margin-bottom: 12px;
+}
+
+.an-empty-state p {
+    font-size: 13px;
+    color: #94a3b8;
+    margin: 0;
+}
+
+/* ═══════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+    .an-page {
+        padding: 32px 28px 48px;
+    }
+
+    .an-hero {
+        flex-wrap: wrap;
+        gap: 0;
+        padding: 28px 0;
+    }
+
+    .an-hero-metric {
+        flex: 1 1 45%;
+        padding: 16px 24px;
+    }
+
+    .an-hero-divider {
+        display: none;
+    }
+
+    .an-hero-value {
+        font-size: 28px;
+    }
+
+    .an-panels {
+        grid-template-columns: 1fr;
+    }
+
+    .an-activity {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .an-page {
+        padding: 24px 20px 40px;
+    }
+
+    .an-header {
+        margin-bottom: 32px;
+    }
+
+    .an-h1 {
+        font-size: 26px;
+    }
+
+    .an-hero {
+        padding: 20px 0;
+        margin-bottom: 32px;
+    }
+
+    .an-hero-metric {
+        flex: 1 1 100%;
+        padding: 14px 20px;
+    }
+
+    .an-hero-value {
+        font-size: 24px;
+    }
+
+    .an-panel {
+        padding: 20px 16px;
+    }
+
+    .an-row {
+        flex-wrap: wrap;
+    }
+
+    .an-metric {
+        flex: 1 1 45%;
+        padding: 8px 0;
+    }
+
+    .an-metric + .an-metric::before {
+        display: none;
+    }
+
+    .an-activity-panel {
+        padding: 20px 16px;
+    }
+
+    .an-table thead th {
+        padding: 0 8px 10px;
+    }
+
+    .an-table tbody td {
+        padding: 10px 8px;
+        font-size: 12px;
+    }
+}

@@ -9,6 +9,7 @@ import Orders from "./components/Orders";
 import OrderDetails from "./components/OrderDetails"; // ✅ NEW IMPORT
 import Reports from "./components/Reports"; // Apple Guideline 1.2 Compliance
 import ReportDetails from "./components/ReportDetails"; // Apple Guideline 1.2 Compliance
+import Analytics from "./components/Analytics";
 
 import './App.css';
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/order/:id" element={<PrivateRoute><OrderDetails /></PrivateRoute>} /> {/* ✅ NEW ROUTE */}
         <Route path="/reports" element={<PrivateRoute><Reports /></PrivateRoute>} />
         <Route path="/report/:id" element={<PrivateRoute><ReportDetails /></PrivateRoute>} />
+        <Route path="/analytics" element={<PrivateRoute><Analytics /></PrivateRoute>} />
         <Route path="*" element={<h2>404 - Page Not Found</h2>} />
       </Routes>
     </Router>
