@@ -282,6 +282,19 @@ export async function payoutOrder(orderId, token, { amountCents } = {}) {
 
 // ========= Analytics (Admin) =========
 
+// GA4 web traffic data (requires GA4_PROPERTY_ID + GA4_SERVICE_ACCOUNT_JSON on backend)
+export async function getWebAnalytics(token) {
+  try {
+    const response = await axios.get(`${API_URL}/api/admin/analytics/web`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching web analytics:", error.response?.data || error.message);
+    return { success: false, error: error.response?.data?.error || "Failed to load web analytics." };
+  }
+}
+
 export async function getAnalytics(token) {
   try {
     const response = await axios.get(`${API_URL}/api/admin/analytics`, {
