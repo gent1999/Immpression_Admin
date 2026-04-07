@@ -295,6 +295,18 @@ export async function getWebAnalytics(token) {
   }
 }
 
+export async function getSearchConsoleAnalytics(token) {
+  try {
+    const response = await axios.get(`${API_URL}/api/admin/analytics/search-console`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Search Console analytics:", error.response?.data || error.message);
+    return { success: false, error: error.response?.data?.error || "Failed to load Search Console data." };
+  }
+}
+
 export async function getAnalytics(token) {
   try {
     const response = await axios.get(`${API_URL}/api/admin/analytics`, {

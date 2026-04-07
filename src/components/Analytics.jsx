@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, BarChart, Bar, Cell,
+  ResponsiveContainer, BarChart, Bar, Cell, LineChart, Line, Legend,
 } from "recharts";
 import ScreenTemplate from "./Template/ScreenTemplate";
 import { useAuth } from "@/context/authContext";
-import { getAnalytics, getWebAnalytics } from "@/api/API";
+import { getAnalytics, getWebAnalytics, getSearchConsoleAnalytics } from "@/api/API";
 import "@/styles/analytics.css";
 
 const SOURCE_COLORS = ["#6366f1","#10b981","#f59e0b","#ef4444","#3b82f6","#8b5cf6","#ec4899","#14b8a6"];
@@ -50,6 +50,9 @@ function Analytics() {
   const [webData, setWebData] = useState(null);
   const [webLoading, setWebLoading] = useState(true);
   const [webError, setWebError] = useState("");
+  const [gscData, setGscData] = useState(null);
+  const [gscLoading, setGscLoading] = useState(true);
+  const [gscError, setGscError] = useState("");
 
   useEffect(() => {
     if (!authState?.token) {
@@ -76,6 +79,21 @@ function Analytics() {
         if (res.success) setWebData(res.data);
         else setWebError(res.error || "Failed to load web analytics.");
         setWebLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [authState?.token]);
+
+  useEffect(() => {
+    if (!authState?.token) return;
+    let cancelled = false;
+    (async () => {
+      setGscLoading(true);
+      const res = await getSearchConsoleAnalytics(authState.token);
+      if (!cancelled) {
+        if (res.success) setGscData(res.data);
+        else setGscError(res.error || "Failed to load Search Console data.");
+        setGscLoading(false);
       }
     })();
     return () => { cancelled = true; };
@@ -391,6 +409,115 @@ function Analytics() {
                       </div>
                     ))}
                   </div>
+                </div>
+              </div>
+            </>
+          )}
+        </section>
+
+        {/* ─── Google Search Console ─── */}
+        <section className="an-web-section">
+          <div className="an-web-header">
+            <h2 className="an-panel-title">Search Console · immpression.art</h2>
+            <span className="an-web-badge">Google Search Console · Last 28 days</span>
+          </div>
+
+          {gscLoading && (
+            <div className="an-web-state">
+              <div className="loading-spinner" />
+              <p>Loading Search Console data...</p>
+            </div>
+          )}
+
+          {gscError && !gscLoading && (
+            <div className="an-web-state an-web-error">
+              <p>⚠️ {gscError}</p>
+            </div>
+          )}
+
+          {gscData && !gscLoading && (
+            <>
+              {/* Stat cards */}
+              <div className="an-web-stats an-gsc-stats">
+                <WebStatCard icon="🖱️" label="Total Clicks" value={gscData.summary.clicks.toLocaleString()} />
+                <WebStatCard icon="👁️" label="Impressions" value={gscData.summary.impressions.toLocaleString()} />
+                <WebStatCard icon="📊" label="Avg CTR" value={gscData.summary.ctr} />
+                <WebStatCard icon="📍" label="Avg Position" value={gscData.summary.position} />
+              </div>
+
+              {/* Clicks + Impressions chart */}
+              <div className="an-web-chart-wrap">
+                <p className="an-web-chart-label">Daily Clicks &amp; Impressions</p>
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={gscData.daily} margin={{ top: 4, right: 16, left: -10, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="date" tick={{ fontSize: 11 }} interval="preserveStartEnd" />
+                    <YAxis yAxisId="left" tick={{ fontSize: 11 }} />
+                    <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} />
+                    <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #e5e7eb" }} />
+                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                    <Line yAxisId="left" type="monotone" dataKey="clicks" name="Clicks" stroke="#6366f1" strokeWidth={2} dot={false} />
+                    <Line yAxisId="right" type="monotone" dataKey="impressions" name="Impressions" stroke="#10b981" strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Bottom row: top queries + top pages */}
+              <div className="an-web-bottom">
+                <div className="an-web-card">
+                  <p className="an-web-chart-label">Top Queries</p>
+                  <table className="an-table">
+                    <thead>
+                      <tr>
+                        <th>Query</th>
+                        <th>Clicks</th>
+                        <th>Impr.</th>
+                        <th>CTR</th>
+                        <th>Pos.</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {gscData.topQueries.map((q) => (
+                        <tr key={q.query}>
+                          <td className="an-cell-primary" style={{ maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{q.query}</td>
+                          <td className="an-cell-primary">{q.clicks}</td>
+                          <td className="an-cell-secondary">{q.impressions}</td>
+                          <td className="an-cell-secondary">{q.ctr}</td>
+                          <td className="an-cell-secondary">{q.position}</td>
+                        </tr>
+                      ))}
+                      {gscData.topQueries.length === 0 && (
+                        <tr><td colSpan={5} style={{ textAlign: "center", color: "#94a3b8", padding: "20px" }}>No search data yet</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="an-web-card">
+                  <p className="an-web-chart-label">Top Pages from Search</p>
+                  <table className="an-table">
+                    <thead>
+                      <tr>
+                        <th>Page</th>
+                        <th>Clicks</th>
+                        <th>Impr.</th>
+                        <th>Pos.</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {gscData.topPages.map((p) => (
+                        <tr key={p.page}>
+                          <td className="an-cell-secondary" style={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={p.page}>{p.page}</td>
+                          <td className="an-cell-primary">{p.clicks}</td>
+                          <td className="an-cell-secondary">{p.impressions}</td>
+                          <td className="an-cell-secondary">{p.position}</td>
+                        </tr>
+                      ))}
+                      {gscData.topPages.length === 0 && (
+                        <tr><td colSpan={4} style={{ textAlign: "center", color: "#94a3b8", padding: "20px" }}>No page data yet</td></tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </>

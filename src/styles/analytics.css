@@ -538,3 +538,11 @@
   .an-web-stats { grid-template-columns: repeat(2, 1fr); }
   .an-web-bottom { grid-template-columns: 1fr; }
 }
+
+.an-gsc-stats {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 900px) {
+  .an-gsc-stats { grid-template-columns: repeat(2, 1fr); }
+}
