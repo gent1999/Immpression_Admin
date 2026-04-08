@@ -5,7 +5,7 @@ import ListView from "./ListView";
 import { getAllUsers } from "../api/API";
 import ScreenTemplate from "./Template/ScreenTemplate";
 import { useAuth } from "@/context/authContext";
-import "@styles/UserBase.css";
+import "@styles/userbase.css";
 
 function UserBase() {
   const navigate = useNavigate();
