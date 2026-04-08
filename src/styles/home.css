@@ -17,7 +17,6 @@
   font-weight: 500;
   color: #94a3b8;
   margin: 0 0 4px;
-  letter-spacing: 0.3px;
 }
 
 .home-title {
@@ -41,50 +40,46 @@
   gap: 16px;
 }
 
-/* Last two cards span into a 2-col bottom row */
-.home-grid .home-card:nth-child(4),
-.home-grid .home-card:nth-child(5) {
-  /* natural flow handles this in a 3-col grid */
-}
-
 /* ─── Card ─── */
 .home-card {
-  background: #fff;
-  border: 1px solid #f1f5f9;
-  border-radius: 16px;
-  padding: 28px;
+  background: var(--card-gradient);
+  border: none;
+  border-radius: 18px;
+  padding: 0;
   cursor: pointer;
   text-align: left;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
   position: relative;
   overflow: hidden;
+  min-height: 220px;
 }
 
-.home-card::before {
+.home-card::after {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--card-accent);
-  opacity: 0;
-  transition: opacity 0.18s ease;
-  border-radius: 16px 16px 0 0;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+  pointer-events: none;
+  border-radius: 18px;
 }
 
 .home-card:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.09);
-  transform: translateY(-3px);
-  border-color: transparent;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.2);
 }
 
-.home-card:hover::before {
-  opacity: 1;
+.home-card:active {
+  transform: translateY(-1px);
+}
+
+.home-card-inner {
+  position: relative;
+  z-index: 1;
+  padding: 28px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ─── Card Top ─── */
@@ -92,51 +87,49 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .home-card-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: var(--card-accent-bg);
-  color: var(--card-accent);
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.25);
 }
 
 .home-card-badge {
-  background: #ef4444;
-  color: #fff;
+  background: rgba(255,255,255,0.95);
+  color: #0f172a;
   font-size: 11px;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 20px;
-  min-width: 22px;
-  text-align: center;
-  line-height: 1.4;
-  box-shadow: 0 2px 6px rgba(239,68,68,0.3);
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 /* ─── Card Body ─── */
 .home-card-body {
   flex: 1;
-  margin-bottom: 20px;
 }
 
 .home-card-title {
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 700;
-  color: #0f172a;
+  color: #fff;
   margin: 0 0 8px;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.3px;
 }
 
 .home-card-desc {
   font-size: 13px;
-  color: #64748b;
+  color: rgba(255,255,255,0.75);
   line-height: 1.6;
   margin: 0;
 }
@@ -146,25 +139,26 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid #f8fafc;
+  border-top: 1px solid rgba(255,255,255,0.15);
 }
 
 .home-card-meta {
   font-size: 12px;
   font-weight: 600;
-  color: var(--card-accent);
+  color: rgba(255,255,255,0.85);
 }
 
 .home-card-arrow {
-  font-size: 16px;
-  color: #cbd5e1;
+  font-size: 18px;
+  color: rgba(255,255,255,0.6);
   transition: color 0.18s, transform 0.18s;
 }
 
 .home-card:hover .home-card-arrow {
-  color: var(--card-accent);
-  transform: translateX(4px);
+  color: #fff;
+  transform: translateX(5px);
 }
 
 /* ─── Responsive ─── */
@@ -177,5 +171,4 @@
   .home-page { padding: 24px 16px 48px; }
   .home-header { flex-direction: column; align-items: flex-start; gap: 8px; }
   .home-grid { grid-template-columns: 1fr; }
-  .home-card { padding: 22px; }
 }
