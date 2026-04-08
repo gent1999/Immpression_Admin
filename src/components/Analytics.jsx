@@ -506,7 +506,7 @@ function Analytics() {
                     </thead>
                     <tbody>
                       {gscData.topPages.map((p) => (
-                        <tr key={p.page}>
+                        <tr key={p.fullUrl}>
                           <td className="an-cell-secondary" style={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={p.page}>{p.page}</td>
                           <td className="an-cell-primary">{p.clicks}</td>
                           <td className="an-cell-secondary">{p.impressions}</td>
