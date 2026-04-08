@@ -1,12 +1,181 @@
-/* ✅ Card Container */
-.card-container {
-    display: flex;
-    justify-content: flex-start; /* Align to the left */
-    align-items: flex-start;
-    gap: 30px;
-    width: 100%;
-    padding-left: 40px; /* Optional: push it in from the left a bit */
-    margin-top: 20px;
-    flex-wrap: wrap;
-    color: #213547;
+.home-page {
+  padding: 40px 48px 80px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* ─── Header ─── */
+.home-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.home-greeting {
+  font-size: 13px;
+  font-weight: 500;
+  color: #94a3b8;
+  margin: 0 0 4px;
+  letter-spacing: 0.3px;
+}
+
+.home-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.home-date {
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* ─── Grid ─── */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* Last two cards span into a 2-col bottom row */
+.home-grid .home-card:nth-child(4),
+.home-grid .home-card:nth-child(5) {
+  /* natural flow handles this in a 3-col grid */
+}
+
+/* ─── Card ─── */
+.home-card {
+  background: #fff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 28px;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.home-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--card-accent);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  border-radius: 16px 16px 0 0;
+}
+
+.home-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+  transform: translateY(-3px);
+  border-color: transparent;
+}
+
+.home-card:hover::before {
+  opacity: 1;
+}
+
+/* ─── Card Top ─── */
+.home-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.home-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--card-accent-bg);
+  color: var(--card-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.home-card-badge {
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  min-width: 22px;
+  text-align: center;
+  line-height: 1.4;
+  box-shadow: 0 2px 6px rgba(239,68,68,0.3);
+}
+
+/* ─── Card Body ─── */
+.home-card-body {
+  flex: 1;
+  margin-bottom: 20px;
+}
+
+.home-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px;
+  letter-spacing: -0.2px;
+}
+
+.home-card-desc {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ─── Card Footer ─── */
+.home-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid #f8fafc;
+}
+
+.home-card-meta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--card-accent);
+}
+
+.home-card-arrow {
+  font-size: 16px;
+  color: #cbd5e1;
+  transition: color 0.18s, transform 0.18s;
+}
+
+.home-card:hover .home-card-arrow {
+  color: var(--card-accent);
+  transform: translateX(4px);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .home-page { padding: 32px 28px 60px; }
+  .home-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .home-page { padding: 24px 16px 48px; }
+  .home-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .home-grid { grid-template-columns: 1fr; }
+  .home-card { padding: 22px; }
 }
