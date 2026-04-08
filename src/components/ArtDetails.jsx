@@ -8,11 +8,6 @@ import { useAuth } from "@/context/authContext";
 const fmt = (n) =>
   typeof n === "number" && Number.isFinite(n) ? n.toLocaleString() : "—";
 
-function stagePill(stage) {
-  const s = String(stage || "").toLowerCase();
-  return s === "approved" ? "pill approved" : s === "rejected" ? "pill rejected" : "pill review";
-}
-
 export default function ArtDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -32,7 +27,7 @@ export default function ArtDetails() {
         const artwork = await getArtwork(id, authState.token);
         setArt(artwork);
       } catch (e) {
-        console.error("Error fetching artwork:", e?.message || e);
+        console.error(e?.message || e);
       } finally {
         setLoading(false);
       }
@@ -52,18 +47,16 @@ export default function ArtDetails() {
   };
 
   const handleApprove = async () => {
-    if (!authState?.token) return;
     try {
       await approveArtwork(id, authState.token);
       setArt((prev) => ({ ...prev, stage: "approved" }));
-      notify("success", "Artwork approved.");
+      notify("success", "Artwork approved and live on the marketplace.");
     } catch {
-      notify("error", "Failed to approve.");
+      notify("error", "Failed to approve. Try again.");
     }
   };
 
   const handleReject = async () => {
-    if (!authState?.token) return;
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/admin/art/${id}/reject`,
@@ -76,15 +69,15 @@ export default function ArtDetails() {
       if (!res.ok) throw new Error();
       setArt((prev) => ({ ...prev, stage: "rejected" }));
       setShowRejectBox(false);
+      setRejectionMessage("");
       notify("success", "Artwork rejected.");
     } catch {
-      notify("error", "Failed to reject.");
+      notify("error", "Failed to reject. Try again.");
     }
   };
 
   const handleDelete = async () => {
-    if (!authState?.token) return;
-    if (!window.confirm("Delete this artwork? This cannot be undone.")) return;
+    if (!window.confirm("Permanently delete this artwork?")) return;
     try {
       await deleteArtwork(id, authState.token);
       navigate("/review-art");
@@ -94,141 +87,145 @@ export default function ArtDetails() {
   };
 
   if (loading)
-    return <ScreenTemplate><div className="pad">Loading artwork…</div></ScreenTemplate>;
+    return <ScreenTemplate><div className="artd-center">Loading…</div></ScreenTemplate>;
   if (!art)
-    return <ScreenTemplate><div className="pad">Artwork not found.</div></ScreenTemplate>;
+    return <ScreenTemplate><div className="artd-center">Artwork not found.</div></ScreenTemplate>;
 
-  const stageLabel = art.stage === "review" ? "Pending" : (art.stage || "").charAt(0).toUpperCase() + (art.stage || "").slice(1);
+  const stage = (art.stage || "").toLowerCase();
+  const stageLabel = stage === "review" ? "Pending Review" : stage === "approved" ? "Approved" : "Rejected";
 
   return (
     <ScreenTemplate>
       <div className="artd-page">
 
-        {/* ─── Header ─── */}
-        <div className="artd-header">
-          <div className="left">
-            <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
-            <div className="titling">
-              <h1 className="artd-title">{art.name}</h1>
-              <p className="sub">
-                by <strong>{art.artistName}</strong> · Uploaded{" "}
-                {new Date(art.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
-              </p>
-            </div>
-          </div>
-          <span className={stagePill(art.stage)}>{stageLabel}</span>
+        {/* ─── Breadcrumb ─── */}
+        <div className="artd-breadcrumb">
+          <button className="artd-back" onClick={() => navigate(-1)}>← Artwork Review</button>
+          <span className="artd-breadcrumb-sep">/</span>
+          <span className="artd-breadcrumb-current">{art.name}</span>
         </div>
 
-        {/* ─── Inline notification ─── */}
+        {/* ─── Notice ─── */}
         {actionStatus && (
           <div className={`artd-notice artd-notice--${actionStatus.type}`}>
             {actionStatus.msg}
           </div>
         )}
 
-        {/* ─── Two columns ─── */}
-        <div className="artd-grid-2">
+        {/* ─── Main layout ─── */}
+        <div className="artd-layout">
 
-          {/* LEFT */}
-          <div className="col">
-            <div className="card">
-              <img className="artd-image" src={art.imageLink} alt={art.name} />
-            </div>
-
-            <div className="card">
-              <div className="card-head"><h3>Details</h3></div>
-              <div className="card-body">
-                <dl className="kv">
-                  <dt>Category</dt>
-                  <dd>{art.category || "—"}</dd>
-                  <dt>Views</dt>
-                  <dd>{fmt(art.views)}</dd>
-                  <dt>Sold Status</dt>
-                  <dd>{(art.soldStatus || "unsold").charAt(0).toUpperCase() + (art.soldStatus || "unsold").slice(1)}</dd>
-                  <dt>Dimensions</dt>
-                  <dd>{dims}</dd>
-                  <dt>Weight</dt>
-                  <dd>{art.weight ? `${art.weight} lbs` : "—"}</dd>
-                  <dt>Signed</dt>
-                  <dd>{art.isSigned ? "Yes" : "No"}</dd>
-                  <dt>Framed</dt>
-                  <dd>{art.isFramed ? "Yes" : "No"}</dd>
-                </dl>
-              </div>
-            </div>
+          {/* LEFT — artwork image */}
+          <div className="artd-image-col">
+            <img className="artd-image" src={art.imageLink} alt={art.name} />
           </div>
 
-          {/* RIGHT */}
-          <div className="col">
+          {/* RIGHT — all info + actions */}
+          <div className="artd-info-col">
 
-            <div className="card">
-              <div className="card-head"><h3>Overview</h3></div>
-              <div className="card-body">
-                <dl className="kv">
-                  <dt>Price</dt>
-                  <dd>${fmt(art.price)}</dd>
-                  {art.description && (
-                    <>
-                      <dt>Description</dt>
-                      <dd className="wrap">{art.description}</dd>
-                    </>
-                  )}
-                </dl>
+            {/* Title block */}
+            <div className="artd-title-block">
+              <div className="artd-category">{art.category || "Uncategorized"}</div>
+              <h1 className="artd-title">{art.name}</h1>
+              <p className="artd-artist">by {art.artistName}</p>
+              <div className="artd-price-row">
+                <span className="artd-price">${fmt(art.price)}</span>
+                <span className={`artd-status artd-status--${stage}`}>{stageLabel}</span>
               </div>
             </div>
 
-            {(art.reviewedByEmail || art.rejectionMessage) && (
-              <div className="card">
-                <div className="card-head"><h3>Review Info</h3></div>
-                <div className="card-body">
-                  <dl className="kv">
-                    {art.reviewedByEmail && (
-                      <>
-                        <dt>Reviewed By</dt>
-                        <dd className="wrap">{art.reviewedByEmail}</dd>
-                        <dt>Reviewed At</dt>
-                        <dd>{art.reviewedAt ? new Date(art.reviewedAt).toLocaleString() : "—"}</dd>
-                      </>
-                    )}
-                    {art.rejectionMessage && (
-                      <>
-                        <dt>Reason</dt>
-                        <dd className="wrap">{art.rejectionMessage}</dd>
-                      </>
-                    )}
-                  </dl>
+            <div className="artd-divider" />
+
+            {/* Description */}
+            {art.description && (
+              <>
+                <p className="artd-description">{art.description}</p>
+                <div className="artd-divider" />
+              </>
+            )}
+
+            {/* Specs grid */}
+            <div className="artd-specs">
+              <div className="artd-spec">
+                <span className="artd-spec-label">Views</span>
+                <span className="artd-spec-value">{fmt(art.views)}</span>
+              </div>
+              <div className="artd-spec">
+                <span className="artd-spec-label">Sold Status</span>
+                <span className="artd-spec-value">{(art.soldStatus || "Unsold").charAt(0).toUpperCase() + (art.soldStatus || "unsold").slice(1)}</span>
+              </div>
+              <div className="artd-spec">
+                <span className="artd-spec-label">Dimensions</span>
+                <span className="artd-spec-value">{dims}</span>
+              </div>
+              <div className="artd-spec">
+                <span className="artd-spec-label">Weight</span>
+                <span className="artd-spec-value">{art.weight ? `${art.weight} lbs` : "—"}</span>
+              </div>
+              <div className="artd-spec">
+                <span className="artd-spec-label">Signed</span>
+                <span className="artd-spec-value">{art.isSigned ? "Yes" : "No"}</span>
+              </div>
+              <div className="artd-spec">
+                <span className="artd-spec-label">Framed</span>
+                <span className="artd-spec-value">{art.isFramed ? "Yes" : "No"}</span>
+              </div>
+              <div className="artd-spec">
+                <span className="artd-spec-label">Uploaded</span>
+                <span className="artd-spec-value">{new Date(art.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</span>
+              </div>
+              {art.reviewedByEmail && (
+                <div className="artd-spec">
+                  <span className="artd-spec-label">Reviewed By</span>
+                  <span className="artd-spec-value">{art.reviewedByEmail}</span>
                 </div>
+              )}
+            </div>
+
+            {art.rejectionMessage && (
+              <div className="artd-rejection-note">
+                <span className="artd-spec-label">Rejection Reason</span>
+                <p>{art.rejectionMessage}</p>
               </div>
             )}
 
-            <div className="card">
-              <div className="card-head"><h3>Actions</h3></div>
-              <div className="card-body actions">
-                {art.stage === "review" && (
-                  <>
-                    <button className="btn approve" onClick={handleApprove}>Approve</button>
-                    {!showRejectBox ? (
-                      <button className="btn reject" onClick={() => setShowRejectBox(true)}>Reject</button>
-                    ) : (
-                      <div className="reject-box">
-                        <textarea
-                          placeholder="Reason for rejection (optional)"
-                          value={rejectionMessage}
-                          onChange={(e) => setRejectionMessage(e.target.value)}
-                          rows={3}
-                        />
-                        <button className="btn reject" onClick={handleReject}>Confirm Reject</button>
-                        <button className="btn neutral" onClick={() => setShowRejectBox(false)}>Cancel</button>
+            <div className="artd-divider" />
+
+            {/* Actions */}
+            <div className="artd-actions">
+              {stage === "review" && (
+                <>
+                  <button className="artd-btn artd-btn--approve" onClick={handleApprove}>
+                    Approve
+                  </button>
+                  {!showRejectBox ? (
+                    <button className="artd-btn artd-btn--reject" onClick={() => setShowRejectBox(true)}>
+                      Reject
+                    </button>
+                  ) : (
+                    <div className="artd-reject-box">
+                      <textarea
+                        placeholder="Reason for rejection (optional — sent to artist)"
+                        value={rejectionMessage}
+                        onChange={(e) => setRejectionMessage(e.target.value)}
+                        rows={3}
+                      />
+                      <div className="artd-reject-row">
+                        <button className="artd-btn artd-btn--reject" onClick={handleReject}>Confirm Reject</button>
+                        <button className="artd-btn artd-btn--ghost" onClick={() => setShowRejectBox(false)}>Cancel</button>
                       </div>
-                    )}
-                  </>
-                )}
-                <button className="btn neutral" onClick={handleDelete}>Delete Artwork</button>
-              </div>
+                    </div>
+                  )}
+                </>
+              )}
+              <button className="artd-delete-link" onClick={handleDelete}>
+                Delete artwork
+              </button>
             </div>
 
           </div>
         </div>
+
       </div>
     </ScreenTemplate>
   );
