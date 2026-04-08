@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginAdmin } from "../api/API"; // ✅ Import the API function
+import { loginAdmin } from "../api/API";
 import logo from "@assets/Immpression_Logo_Transparent.png";
-import ImmpressionLogo from '@assets/Immpression.png';
+import ImmpressionLogo from "@assets/Immpression.png";
+import { useAuth } from "@/context/authContext";
 import "@styles/login.css";
-
-import { useAuth } from '@/context/authContext';
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -15,57 +14,75 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      // ✅ Use the API function instead of direct axios call
       const response = await loginAdmin(email, password);
-
-      console.log("Login successful:", response);
-
-      // ✅ Store token & email in global state + localStorage
       login(response.token, response.email);
-
-      // ✅ Redirect to home after successful login
       navigate("/home");
-
     } catch (err) {
-      console.error("Login error:", err.message);
-      // ✅ Set error message from API response
-      setMsg({
-        type: 'error',
-        message: err.message
-      });
+      setMsg({ type: "error", message: err.message });
     }
   };
 
   return (
-    <div className="login-container">
-      <img src={ImmpressionLogo} alt="Impression Logo" className="ImmpressionLogo" />
-      <img src={logo} alt="Impression Logo" className="logo" />
-      <div className="login-box">
-        <h2 className="adminLogin">Admin Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label>Email:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+    <div className="lg-page">
+      {/* ─── Left brand panel ─── */}
+      <div className="lg-brand">
+        <div className="lg-brand-top">
+          <img src={logo} alt="Immpression" className="lg-brand-logo" />
+          <img src={ImmpressionLogo} alt="Immpression" className="lg-brand-wordmark" />
+          <p className="lg-brand-tagline">
+            Internal admin dashboard for managing artworks, users, orders, and platform operations.
+          </p>
+        </div>
+        <span className="lg-brand-bottom">Immpression &copy; {new Date().getFullYear()}</span>
+      </div>
+
+      {/* ─── Right form panel ─── */}
+      <div className="lg-form-panel">
+        <div className="lg-form-box">
+          <div className="lg-form-heading">
+            <h1 className="lg-form-title">Admin Login</h1>
+            <p className="lg-form-subtitle">Sign in to access the dashboard.</p>
           </div>
-          <div className="input-group">
-            <label>Password:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          {msg && <p className={(msg.type === 'error') ? "error-message": "general-message"}>{msg.message}</p>} 
-          <button type="submit">Login</button>
-        </form>
+
+          <form onSubmit={handleSubmit} className="lg-fields">
+            <div className="lg-field">
+              <label className="lg-label" htmlFor="lg-email">Email</label>
+              <input
+                id="lg-email"
+                type="email"
+                className="lg-input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+              />
+            </div>
+
+            <div className="lg-field">
+              <label className="lg-label" htmlFor="lg-password">Password</label>
+              <input
+                id="lg-password"
+                type="password"
+                className="lg-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+              />
+            </div>
+
+            {msg && (
+              <div className={msg.type === "error" ? "lg-error" : "lg-success"}>
+                {msg.message}
+              </div>
+            )}
+
+            <button type="submit" className="lg-submit">
+              Sign In
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
