@@ -33,7 +33,7 @@ function ListView({ data, type, onDelete }) {
 
   const getArrow = (key) => {
     if (sortConfig.key === key) {
-      return sortConfig.direction === "asc" ? " \u2B07\uFE0F" : " \u2B06\uFE0F";
+      return sortConfig.direction === "asc" ? " ↑" : " ↓";
     }
     return "";
   };
