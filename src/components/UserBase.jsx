@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import UserTopPanel from "./UserTopPanel"; // ✅ Import the new Top Panel
+import UserTopPanel from "./UserTopPanel";
 import ListView from "./ListView";
 import { getAllUsers } from "../api/API";
-
 import ScreenTemplate from "./Template/ScreenTemplate";
 import { useAuth } from "@/context/authContext";
-import "@styles/userbase.css";
+import "@styles/UserBase.css";
 
 function UserBase() {
   const navigate = useNavigate();
@@ -15,50 +14,44 @@ function UserBase() {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState("all");
 
-  // fetch users when auth token is available
   useEffect(() => {
     async function fetchUsers() {
-      if (!authState || !authState.token) {
-        console.error("No token found, redirecting to login.");
+      if (!authState?.token) {
         navigate("/login");
         return;
       }
-
       setLoading(true);
       const userList = await getAllUsers(authState.token);
-
       setUsers(userList);
       setFilteredUsers(userList);
       setLoading(false);
     }
-
     fetchUsers();
   }, [authState?.token]);
 
-  // ✅ Show All Users
   const handleShowAllUsers = () => {
     setFilteredUsers(users);
+    setActiveFilter("all");
   };
 
-  // ✅ Filter Verified Users (Future Implementation)
-  const handleFilterVerified = () => {
-    setFilteredUsers(users.filter((user) => user.verified));
+  const handleFilterLinked = () => {
+    setFilteredUsers(users.filter((u) => Boolean(u.stripeAccountId)));
+    setActiveFilter("linked");
   };
 
-  // ✅ Filter Unverified Users (Future Implementation)
-  const handleFilterUnverified = () => {
-    setFilteredUsers(users.filter((user) => !user.verified));
+  const handleFilterUnlinked = () => {
+    setFilteredUsers(users.filter((u) => !u.stripeAccountId));
+    setActiveFilter("unlinked");
   };
 
-  // ✅ Search Functionality
   const handleSearch = (query) => {
-    const lowerCaseQuery = query.trim().toLowerCase();
-
+    const q = query.trim().toLowerCase();
     setFilteredUsers(
-      users.filter((user) => {
-        const nameMatch = (user.name) ? user.name.toLowerCase().includes(lowerCaseQuery) : false;
-        const emailMatch = (user.email) ? user.email.toLowerCase().includes(lowerCaseQuery) : false;
+      users.filter((u) => {
+        const nameMatch = u.name ? u.name.toLowerCase().includes(q) : false;
+        const emailMatch = u.email ? u.email.toLowerCase().includes(q) : false;
         return nameMatch || emailMatch;
       })
     );
@@ -66,22 +59,22 @@ function UserBase() {
 
   return (
     <ScreenTemplate>
-      <UserTopPanel 
-        totalUsers={users.length} 
-        totalVerified={users.filter(user => user.verified).length} 
-        totalUnverified={users.filter(user => !user.verified).length} 
-        onShowAllUsers={handleShowAllUsers} 
-        onFilterVerified={handleFilterVerified} 
-        onFilterUnverified={handleFilterUnverified} 
+      <UserTopPanel
+        totalUsers={users.length}
+        totalLinked={users.filter((u) => Boolean(u.stripeAccountId)).length}
+        totalUnlinked={users.filter((u) => !u.stripeAccountId).length}
+        onShowAllUsers={handleShowAllUsers}
+        onFilterLinked={handleFilterLinked}
+        onFilterUnlinked={handleFilterUnlinked}
         onSearch={handleSearch}
+        activeFilter={activeFilter}
       />
-      
-      {/* ✅ Keep content aligned */}
+
       <div className="userBaseContent">
         {loading ? (
           <div className="loading-container">
             <div className="loading-spinner"></div>
-            <p>Loading users...</p>
+            <p>Loading users…</p>
           </div>
         ) : (
           <div className="users-container">

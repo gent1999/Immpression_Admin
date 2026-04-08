@@ -1,90 +1,49 @@
-import React, { useState } from "react";
-import "@styles/toppanel.css"; // ✅ Import the CSS file
+import React from "react";
+import "@styles/toppanel.css";
 
-export default function UserTopPanel({ 
-  totalUsers, 
-  totalVerified, 
-  totalUnverified, 
-  onShowAllUsers,  
-  onFilterVerified, 
-  onFilterUnverified, 
-  onSearch
+export default function UserTopPanel({
+  totalUsers,
+  totalLinked,
+  totalUnlinked,
+  onShowAllUsers,
+  onFilterLinked,
+  onFilterUnlinked,
+  onSearch,
+  activeFilter,
 }) {
-  const [activeFilter, setActiveFilter] = useState('all');
-
-  const handleFilterClick = (filterType, callback) => {
-    setActiveFilter(filterType);
-    callback();
-  };
-
-  // Render stats overview cards similar to ReviewArt
-  const renderStatsOverview = () => {
-    const statCards = [
-      {
-        title: "Total Users",
-        value: totalUsers,
-        filter: 'all',
-        color: '#3498db',
-        icon: '👥',
-        onClick: () => handleFilterClick('all', onShowAllUsers)
-      },
-      {
-        title: "Verified Users",
-        value: totalVerified,
-        filter: 'verified',
-        color: '#27ae60',
-        icon: '✅',
-        onClick: () => handleFilterClick('verified', onFilterVerified)
-      },
-      {
-        title: "Unverified Users",
-        value: totalUnverified,
-        filter: 'unverified',
-        color: '#e74c3c',
-        icon: '❌',
-        onClick: () => handleFilterClick('unverified', onFilterUnverified)
-      }
-    ];
-
-    return (
-      <>
-        {statCards.map((stat) => (
-          <div 
-            key={stat.filter}
-            className={`stat-item ${activeFilter === stat.filter ? 'active' : ''}`}
-            onClick={stat.onClick}
-            style={{ borderLeftColor: stat.color }}
-          >
-            <div className="stat-icon">{stat.icon}</div>
-            <div className="stat-content">
-              <div className="stat-value">
-                {stat.value.toLocaleString()}
-              </div>
-              <div className="stat-title">{stat.title}</div>
-            </div>
-          </div>
-        ))}
-      </>
-    );
-  };
+  const statCards = [
+    { label: "All Users",       value: totalUsers,      filter: "all",        onClick: onShowAllUsers },
+    { label: "Stripe Linked",   value: totalLinked,     filter: "linked",     onClick: onFilterLinked },
+    { label: "Not Linked",      value: totalUnlinked,   filter: "unlinked",   onClick: onFilterUnlinked },
+  ];
 
   return (
     <div className="top-panel-container">
       <div className="admin-header">
-        <h1>User Management Dashboard</h1>
-        <p>Manage and monitor platform users</p>
+        <h1>User Base</h1>
       </div>
-      
+
       <div className="panel">
         <div className="stats-container">
-          {renderStatsOverview()}
+          {statCards.map((s) => (
+            <div
+              key={s.filter}
+              className={`stat-item ${activeFilter === s.filter ? "active" : ""}`}
+              onClick={s.onClick}
+            >
+              <div className="stat-content">
+                <div className="stat-value">{(s.value || 0).toLocaleString()}</div>
+                <div className="stat-title">{s.label}</div>
+              </div>
+            </div>
+          ))}
         </div>
-        
+
         <div className="search-view-container">
           <input
             type="text"
             className="searchInput"
-            placeholder="Search by name or email..."
+            placeholder="Search by name or email…"
             onChange={(e) => onSearch(e.target.value)}
           />
         </div>

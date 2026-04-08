@@ -451,3 +451,31 @@ export async function dismissReport(reportId, reason, token) {
     throw new Error(error.response?.data?.error || "Failed to dismiss report.");
   }
 }
+
+export async function getAdminSettings(token) {
+  try {
+    const response = await axios.get(`${API_URL}/api/admin/settings`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching admin settings:", error.response?.data || error.message);
+    throw new Error("Failed to load settings.");
+  }
+}
+
+export async function saveAdminSettings(token, payload) {
+  try {
+    const response = await axios.put(`${API_URL}/api/admin/settings`, payload, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error saving admin settings:", error.response?.data || error.message);
+    throw new Error("Failed to save settings.");
+  }
+}
+
+export function getExportUrl(type, token) {
+  return `${API_URL}/api/admin/settings/export/${type}?token=${token}`;
+}

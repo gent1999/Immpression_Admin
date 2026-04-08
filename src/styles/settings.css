@@ -1,0 +1,293 @@
+.st-page {
+  padding: 28px 36px 60px;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ─── Page title ─── */
+.st-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+/* ─── Notice ─── */
+.st-notice {
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid;
+  margin-bottom: 4px;
+}
+.st-notice--success { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+.st-notice--error   { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+
+/* ─── Section card ─── */
+.st-section {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+}
+
+.st-section-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.st-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.st-section-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+}
+
+.st-section-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ─── Toggle rows ─── */
+.st-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+.st-toggle-row:last-of-type {
+  border-bottom: none;
+}
+
+.st-toggle-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.st-toggle-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.st-toggle-desc {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Toggle switch */
+.st-switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.st-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.st-switch-track {
+  position: absolute;
+  inset: 0;
+  background: #cbd5e1;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.st-switch-track::before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  top: 3px;
+  background: #fff;
+  transition: transform 0.2s;
+}
+
+.st-switch input:checked + .st-switch-track {
+  background: #0f172a;
+}
+
+.st-switch input:checked + .st-switch-track::before {
+  transform: translateX(18px);
+}
+
+/* ─── Email list ─── */
+.st-email-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.st-email-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.st-email-sublabel {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.st-email-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.st-email-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  color: #0f172a;
+}
+
+.st-chip-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.15s;
+}
+.st-chip-remove:hover { color: #b91c1c; }
+
+.st-email-empty {
+  font-size: 12px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.st-email-add {
+  display: flex;
+  gap: 8px;
+}
+
+.st-email-input {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 13px;
+  border: 1px solid #e2e8f0;
+  outline: none;
+  background: #fff;
+  color: #0f172a;
+  transition: border-color 0.15s;
+}
+.st-email-input:focus { border-color: #0f172a; }
+
+.st-btn-add {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #0f172a;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.st-btn-add:hover { opacity: 0.85; }
+
+/* ─── Save button ─── */
+.st-save-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.st-btn-save {
+  padding: 10px 28px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #0f172a;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.st-btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.st-btn-save:not(:disabled):hover { opacity: 0.85; }
+
+/* ─── Export section ─── */
+.st-export-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.st-export-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.st-export-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.st-export-card-desc {
+  font-size: 12px;
+  color: #64748b;
+  flex: 1;
+}
+
+.st-btn-export {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #0f172a;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s;
+  align-self: flex-start;
+}
+.st-btn-export:hover { opacity: 0.85; }
+
+@media (max-width: 600px) {
+  .st-page { padding: 20px 16px 48px; }
+  .st-export-grid { grid-template-columns: 1fr; }
+}

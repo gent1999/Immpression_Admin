@@ -5,10 +5,6 @@ import { getUserDetails, deleteUser } from "../api/API";
 import { useAuth } from "@/context/authContext";
 import "@styles/userdetails.css";
 
-function pillClass(ok) {
-  return ok ? "pill verified" : "pill unverified";
-}
-
 export default function UserDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -16,14 +12,12 @@ export default function UserDetails() {
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [actionStatus, setActionStatus] = useState(null);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
-      if (!authState?.token) {
-        navigate("/login");
-        return;
-      }
+      if (!authState?.token) { navigate("/login"); return; }
       try {
         const userData = await getUserDetails(id, authState.token);
         setUser(userData);
@@ -36,201 +30,169 @@ export default function UserDetails() {
   }, [id, authState?.token, navigate]);
 
   const joinedDate = useMemo(
-    () => (user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"),
+    () =>
+      user?.createdAt
+        ? new Date(user.createdAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })
+        : "—",
     [user]
   );
 
+  const notify = (type, msg) => {
+    setActionStatus({ type, msg });
+    setTimeout(() => setActionStatus(null), 4000);
+  };
+
   const handleDeleteUser = async () => {
     if (!authState?.token) return;
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
-
+    if (!window.confirm("Permanently delete this user?")) return;
     try {
       await deleteUser(id, authState.token);
-      alert("User deleted successfully.");
       navigate("/user-base");
     } catch (e) {
       console.error("Error deleting user:", e?.message || e);
-      alert("Failed to delete user.");
+      notify("error", "Failed to delete user. Try again.");
     }
   };
 
   const stripeLinked = Boolean(user?.stripeAccountId);
-  const onboardingText = user?.stripeOnboardingCompleted ? "Completed" : "Incomplete";
+  const verified = Boolean(user?.isVerified);
 
   if (loading)
-    return (
-      <ScreenTemplate>
-        <div className="pad">Loading User Details…</div>
-      </ScreenTemplate>
-    );
-
+    return <ScreenTemplate><div className="ud-center">Loading…</div></ScreenTemplate>;
   if (!user)
-    return (
-      <ScreenTemplate>
-        <div className="pad">User not found.</div>
-      </ScreenTemplate>
-    );
+    return <ScreenTemplate><div className="ud-center">User not found.</div></ScreenTemplate>;
 
   return (
     <ScreenTemplate>
       <div className="ud-page">
-        {/* Header */}
-        <div className="ud-header">
-          <div className="left">
-            <button className="back-btn" onClick={() => navigate(-1)}>
-              ← Back
-            </button>
-            <div className="titling">
-              <h1 className="ud-title">{user.name}</h1>
-              <div className="sub">
-                Joined <strong>{joinedDate}</strong>
-              </div>
-            </div>
-          </div>
-          {/* FIX: use isVerified from schema */}
-          <span className={pillClass(!!user.isVerified)}>
-            {user.isVerified ? "VERIFIED" : "UNVERIFIED"}
-          </span>
+
+        {/* ─── Breadcrumb ─── */}
+        <div className="ud-breadcrumb">
+          <button className="ud-back" onClick={() => navigate(-1)}>← User Base</button>
+          <span className="ud-breadcrumb-sep">/</span>
+          <span className="ud-breadcrumb-current">{user.name}</span>
         </div>
 
-        {/* Two columns: left (profile), right (cards + actions) */}
-        <div className="ud-grid">
-          {/* LEFT column */}
-          <div className="col">
-            {/* Profile card */}
-            <div className="card">
-              <div className="card-body profile">
-                <img
-                  className="avatar"
-                  src={
-                    user.profilePictureLink ||
-                    "https://via.placeholder.com/160?text=User"
-                  }
-                  alt={user.name}
-                />
-                <div className="who">
-                  <div className="name">{user.name}</div>
-                  <div className="email">{user.email}</div>
+        {/* ─── Notice ─── */}
+        {actionStatus && (
+          <div className={`ud-notice ud-notice--${actionStatus.type}`}>
+            {actionStatus.msg}
+          </div>
+        )}
+
+        {/* ─── Main layout ─── */}
+        <div className="ud-layout">
+
+          {/* LEFT — avatar */}
+          <div className="ud-avatar-col">
+            <img
+              className="ud-avatar"
+              src={user.profilePictureLink || "https://via.placeholder.com/400?text=No+Photo"}
+              alt={user.name}
+            />
+          </div>
+
+          {/* RIGHT — all info + actions */}
+          <div className="ud-info-col">
+
+            {/* Identity block */}
+            <div>
+              <div className="ud-account-type">{user.accountType || "User"}</div>
+              <h1 className="ud-name">{user.name}</h1>
+              <p className="ud-email">{user.email}</p>
+              <div className="ud-status-row">
+                <span className={`ud-badge ud-badge--${verified ? "verified" : "unverified"}`}>
+                  {verified ? "Verified" : "Unverified"}
+                </span>
+                {stripeLinked && (
+                  <span className="ud-badge ud-badge--stripe">Stripe Linked</span>
+                )}
+              </div>
+            </div>
+
+            <div className="ud-divider" />
+
+            {/* Overview specs */}
+            <div className="ud-specs">
+              <div className="ud-spec">
+                <span className="ud-spec-label">Joined</span>
+                <span className="ud-spec-value">{joinedDate}</span>
+              </div>
+              <div className="ud-spec">
+                <span className="ud-spec-label">Views</span>
+                <span className="ud-spec-value">{typeof user.views === "number" ? user.views.toLocaleString() : "—"}</span>
+              </div>
+              <div className="ud-spec">
+                <span className="ud-spec-label">Artist Type</span>
+                <span className="ud-spec-value">{user.artistType || "—"}</span>
+              </div>
+              <div className="ud-spec">
+                <span className="ud-spec-label">Categories</span>
+                <span className="ud-spec-value">
+                  {Array.isArray(user.artCategories) && user.artCategories.length
+                    ? user.artCategories.join(", ")
+                    : "—"}
+                </span>
+              </div>
+              <div className="ud-spec">
+                <span className="ud-spec-label">User ID</span>
+                <span className="ud-spec-value ud-spec-value--mono">{user._id}</span>
+              </div>
+              <div className="ud-spec">
+                <span className="ud-spec-label">Stripe Onboarding</span>
+                <span className="ud-spec-value">
+                  {stripeLinked
+                    ? user.stripeOnboardingCompleted
+                      ? "Completed"
+                      : "Incomplete"
+                    : "—"}
+                </span>
+              </div>
+            </div>
+
+            {/* Stripe account ID */}
+            {stripeLinked && (
+              <>
+                <div className="ud-divider" />
+                <div className="ud-stripe-row">
+                  <div className="ud-spec-label">Stripe Account ID</div>
+                  <div className="ud-stripe-val">
+                    <span className="ud-spec-value ud-spec-value--mono">{user.stripeAccountId}</span>
+                    <button
+                      className="ud-copy-btn"
+                      onClick={() => navigator.clipboard.writeText(user.stripeAccountId)}
+                    >
+                      Copy
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
 
-            {/* Numbers / quick meta */}
-            <div className="card">
-              <div className="card-head">
-                <h3>Overview</h3>
-              </div>
-              <div className="card-body">
-                <dl className="kv">
-                  <dt>Artist Type</dt>
-                  <dd>{user.artistType || "N/A"}</dd>
-
-                  <dt>Views</dt>
-                  <dd>{typeof user.views === "number" ? user.views : "—"}</dd>
-
-                  <dt>Account Type</dt>
-                  <dd>{user.accountType || "N/A"}</dd>
-
-                  <dt>Categories</dt>
-                  <dd>
-                    {Array.isArray(user.artCategories) && user.artCategories.length
-                      ? user.artCategories.join(", ")
-                      : "None"}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT column */}
-          <div className="col">
             {/* Bio */}
-            <div className="card">
-              <div className="card-head">
-                <h3>Bio</h3>
-              </div>
-              <div className="card-body">
-                <p className="wrap">{user.bio || "No bio available."}</p>
-              </div>
+            {user.bio && (
+              <>
+                <div className="ud-divider" />
+                <p className="ud-bio">{user.bio}</p>
+              </>
+            )}
+
+            <div className="ud-divider" />
+
+            {/* Actions */}
+            <div className="ud-actions">
+              <button className="ud-btn ud-btn--delete" onClick={handleDeleteUser}>
+                Delete user
+              </button>
             </div>
 
-            {/* Stripe */}
-            <div className="card">
-              <div className="card-head">
-                <h3>Stripe</h3>
-              </div>
-              <div className="card-body">
-                <dl className="kv">
-                  <dt>Status</dt>
-                  <dd>
-                    <span className={pillClass(stripeLinked)}>
-                      {stripeLinked ? "LINKED" : "NOT LINKED"}
-                    </span>
-                  </dd>
-
-                  {stripeLinked && (
-                    <>
-                      <dt>Account ID</dt>
-                      <dd className="mono" style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                        <span>{user.stripeAccountId}</span>
-                        <button
-                          className="btn small"
-                          onClick={() => navigator.clipboard.writeText(user.stripeAccountId)}
-                          title="Copy Stripe Account ID"
-                        >
-                          Copy
-                        </button>
-                      </dd>
-
-                      <dt>Onboarding</dt>
-                      <dd>{onboardingText}</dd>
-
-                      {user.stripeOnboardingCompletedAt && (
-                        <>
-                          <dt>Onboarded At</dt>
-                          <dd>
-                            {new Date(user.stripeOnboardingCompletedAt).toLocaleString()}
-                          </dd>
-                        </>
-                      )}
-                    </>
-                  )}
-                </dl>
-              </div>
-            </div>
-
-            {/* Security / Verification */}
-            <div className="card">
-              <div className="card-head">
-                <h3>Security</h3>
-              </div>
-              <div className="card-body">
-                <dl className="kv">
-                  <dt>Verification</dt>
-                  <dd>
-                    <span className={pillClass(!!user.isVerified)}>
-                      {user.isVerified ? "VERIFIED" : "UNVERIFIED"}
-                    </span>
-                  </dd>
-                  <dt>User ID</dt>
-                  <dd className="mono">{user._id}</dd>
-                </dl>
-              </div>
-            </div>
-
-            {/* Admin Actions */}
-            <div className="card">
-              <div className="card-head">
-                <h3>Admin Actions</h3>
-              </div>
-              <div className="card-body actions">
-                <button className="btn danger" onClick={handleDeleteUser}>
-                  Delete User
-                </button>
-              </div>
-            </div>
           </div>
         </div>
+
       </div>
     </ScreenTemplate>
   );
