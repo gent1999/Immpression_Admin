@@ -21,6 +21,7 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
+  align-self: flex-start;
 }
 
 .artd-back {
@@ -271,19 +272,22 @@
 }
 
 .artd-delete-link {
-  background: none;
-  border: none;
-  color: #94a3b8;
-  font-size: 12px;
+  width: 100%;
+  padding: 13px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border: 1px solid #fecaca;
+  background: #fff;
+  color: #b91c1c;
   cursor: pointer;
+  transition: background 0.15s;
   text-align: center;
-  padding: 4px;
-  transition: color 0.15s;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  text-decoration: none;
 }
 
-.artd-delete-link:hover { color: #b91c1c; }
+.artd-delete-link:hover { background: #fef2f2; }
 
 /* ─── Responsive ─── */
 @media (max-width: 1024px) {
