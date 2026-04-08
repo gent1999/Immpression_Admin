@@ -13,12 +13,12 @@ function ArtCard({ art }) {
     const getStageLabel = () => {
         switch (art.stage) {
             case "approved":
-                return <span className="art-stage approved">✅ Approved</span>;
+                return <span className="art-stage approved">Approved</span>;
             case "rejected":
-                return <span className="art-stage rejected">❌ Rejected</span>;
+                return <span className="art-stage rejected">Rejected</span>;
             case "review":
             default:
-                return <span className="art-stage review">⏳ Pending</span>;
+                return <span className="art-stage review">Pending</span>;
         }
     };
 

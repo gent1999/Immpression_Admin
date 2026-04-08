@@ -19,50 +19,20 @@ function TopPanel({
   // Render stats overview cards
   const renderStatsOverview = () => {
     const statCards = [
-      {
-        title: "Total Submitted",
-        value: stats.total,
-        filter: 'all',
-        color: '#3498db',
-        icon: '📊',
-        onClick: onShowAllArt
-      },
-      {
-        title: "Pending Review",
-        value: stats.pending,
-        filter: 'pending',
-        color: '#f39c12',
-        icon: '⏳',
-        onClick: onFilterPending
-      },
-      {
-        title: "Approved",
-        value: stats.approved,
-        filter: 'approved',
-        color: '#27ae60',
-        icon: '✅',
-        onClick: onFilterApproved
-      },
-      {
-        title: "Rejected",
-        value: stats.rejected,
-        filter: 'rejected',
-        color: '#e74c3c',
-        icon: '❌',
-        onClick: onFilterRejected
-      }
+      { title: "All",     value: stats.total,    filter: 'all',      onClick: onShowAllArt },
+      { title: "Pending", value: stats.pending,  filter: 'pending',  onClick: onFilterPending },
+      { title: "Approved",value: stats.approved, filter: 'approved', onClick: onFilterApproved },
+      { title: "Rejected",value: stats.rejected, filter: 'rejected', onClick: onFilterRejected },
     ];
 
     return (
       <>
         {statCards.map((stat) => (
-          <div 
+          <div
             key={stat.filter}
             className={`stat-item ${activeFilter === stat.filter ? 'active' : ''}`}
             onClick={stat.onClick}
-            style={{ borderLeftColor: stat.color }}
           >
-            <div className="stat-icon">{stat.icon}</div>
             <div className="stat-content">
               <div className="stat-value">
                 {statsLoading ? '...' : stat.value.toLocaleString()}
@@ -78,8 +48,8 @@ function TopPanel({
   return (
     <div className="top-panel-container">
       <div className="admin-header">
-        <h1>Artwork Review Dashboard</h1>
-        <p>Manage and review submitted artworks</p>
+        <h1>Artwork Review</h1>
+        <p>Manage and moderate submitted artworks</p>
       </div>
       
       <div className="panel">
@@ -95,7 +65,7 @@ function TopPanel({
             onChange={(e) => onSearch(e.target.value)}
           />
           <button className="viewToggleButton" onClick={toggleViewMode}>
-            {viewMode === "grid" ? "📋 List" : "🖼️ Grid"}
+            {viewMode === "grid" ? "List view" : "Grid view"}
           </button>
 
           <div className="selectPageSize">
