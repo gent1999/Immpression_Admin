@@ -189,7 +189,7 @@ function ReviewArt() {
         
         // return arts status in grid/list view
         return(
-            <div className="artworks-container">
+            <div className={`artworks-container artworks-container--${viewMode}`}>
                 {viewMode === "grid" ? (
                     <div className="grid">
                         {artworks.map((art) => (
